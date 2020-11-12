@@ -16,7 +16,6 @@ const ListOsobe = (props) => {
     getOsobe().then(
       response => {
         setOsobe(response.data);
-        console.log(response.data);
       }).catch(e => {
         console.log(e);
       });

@@ -14,13 +14,6 @@ const ListPredmeti = (props) => {
     Promise.all([getPredmeti()]).then(
       response => setPredmeti(response[0].data)
     ).catch(e => console.log(e))
-    /*getPredmeti().then(
-      response => {
-        setPredmeti(response.data);
-        console.log(response.data);
-      }).catch(e => {
-        console.log(e);
-      });*/
   };
 
   const remove = (id) => (e) => {

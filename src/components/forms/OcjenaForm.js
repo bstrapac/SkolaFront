@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { Formik, Form, ErrorMessage } from 'formik';
+import DatePicker from "react-datepicker";
 
 import { getPredmeti } from '../../services/PredmetService';
 import { getUcenici, getNastavnici } from '../../services/OsobaService';
@@ -10,6 +11,8 @@ import DropDown from '../utils/DropDown'
 import Input from '../utils/Input'
 import { Submit } from '../utils/Button'
 
+import "react-datepicker/dist/react-datepicker.css";
+
 const OcjenaForm = () => {
   const [ucenik, setUcenik] = useState(0);
   const [predmet, setPredmet] = useState(0);
@@ -19,14 +22,14 @@ const OcjenaForm = () => {
   const [ucenici, setUcenici] = useState([]);
   const [nastavnici, setNastavnici] = useState([]);
   const [message] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
 
   useEffect(()=>{
     getData();
     if(ucenik !== 0 && predmet !== 0){
       match(ucenik, predmet);
     };
-    onChange([ucenik, predmet, nastavnik]);
-  }, [ucenik, predmet, nastavnik]);
+  }, [ucenik, predmet]);
 
   const getData = () => {
     Promise.all([getPredmeti(), getUcenici(), getNastavnici()]).then(
@@ -82,7 +85,7 @@ const OcjenaForm = () => {
     let ocjena = {
       id_predmet_osoba : predmetosoba,
       ocjena : values.ocjena,
-      datum : "2020-10-11",
+      datum : startDate.getFullYear() + '-' + ( startDate.getMonth() + 1 )+ '-' +startDate.getDate(),
       id_osoba_dod : nastavnik
     }
     console.log(ocjena);
@@ -104,6 +107,14 @@ const OcjenaForm = () => {
             <DropDown data ={ ucenici } action = { onChange }> Učenik </DropDown>
             <DropDown data = {predmeti} action = {onChange}> Predmet </DropDown>
             <Input name="ocjena">Ocjena</Input>
+            <fieldset  className="form-group">
+              <label>Datum: </label>
+              <DatePicker
+                dateFormat="yyyy-MM-dd"
+                selected={startDate} 
+                onChange={date => setStartDate(date)} 
+              />
+            </fieldset>
             <DropDown data = {nastavnici} action = {onChange}> Nastavnik </DropDown>
             <Submit/>
           </Form>

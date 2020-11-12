@@ -2,6 +2,8 @@ import React,{useState, useEffect} from 'react';
 import { getByID } from '../services/OsobaService'
 import { getByIDUcenik } from '../services/PredmetOsobaService';
 
+import { Add } from './utils/Button'
+
 const OsobaDetails = (props) => {
   const initialOsoba = {
     id_osoba : 0,
@@ -44,12 +46,7 @@ const OsobaDetails = (props) => {
           <h2 className= "osobaBasic" > { tip }, { oib }  </h2>
         </div>
         <div className = "osobaInfo">
-          <button 
-            className="btnAddNew"
-            onClick = { update(id_osoba) }
-          >
-            Uredi podatke
-          </button>
+        <Add action={ update(id_osoba) }>Uredi podatke</Add>
           <p>Datum rođenja: { dob }</p>
           <p>Adresa: { adresa }</p>
           <p>Kontakt: { kontakt }</p>
@@ -60,12 +57,12 @@ const OsobaDetails = (props) => {
             <h3>Upisani predmeti: </h3> 
             <button className="btnAddNew">Dodaj novi</button>
           </div>
-        {
-          predmetosoba.map(
-            po => 
-              <p key = { po.id_predmet }> { po.predmet } </p>
-          )
-        }
+            {
+              predmetosoba.map(
+                po => 
+                  <p key = { po.id_predmet }> { po.predmet } </p>
+              )
+            }
         </div>
       </div>
   )

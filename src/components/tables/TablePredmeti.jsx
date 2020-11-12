@@ -3,7 +3,7 @@ import Predmet from './bodyRow/Predmet'
 
 const TablePredmeti = ({predmeti, remove, update}) => {
     return (
-      <table className="table">
+      <table>
       <thead>
         <tr>
           <th className="small_tb_head">Id</th>
