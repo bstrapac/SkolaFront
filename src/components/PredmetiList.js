@@ -1,100 +1,53 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { getPredmeti, deletePredmet } from '../services/PredmetService'
+import TablePredmeti from './tables/TablePredmeti'
+import { Add } from './utils/Button'
 
+const ListPredmeti = (props) => {
+  const [predmeti, setPredmeti] = useState([]);
 
-const API_URL = 'http://localhost:3030/skola/predmeti';
-const axiosinstance = axios.create({
-  baseURL: API_URL
-});
-class ListPredmeti extends React.Component{
-  constructor(props) {
-    super(props)
-    this.state = {
-      predmeti: []
-    }
-    this.refreshList = this.refreshList.bind(this)
-    this.deletePredmet = this.deletePredmet.bind(this)
-    this.updatePredmet = this.updatePredmet.bind(this)
-    this.addPredmet = this.addPredmet.bind(this)
-  }
+  useEffect(() => {
+    getData()
+  }, []);
 
-  componentDidMount() {
-    this.refreshList()
-  }
-
-  refreshList() {
-    axiosinstance.get(`/`).then(
+  const getData = () =>{
+    Promise.all([getPredmeti()]).then(
+      response => setPredmeti(response[0].data)
+    ).catch(e => console.log(e))
+    /*getPredmeti().then(
       response => {
-      console.log(response);
-      this.setState({ predmeti: response.data })
-    })
-  }
+        setPredmeti(response.data);
+        console.log(response.data);
+      }).catch(e => {
+        console.log(e);
+      });*/
+  };
 
-  deletePredmet(id){
-    axiosinstance.delete(`/predmet/delete/${id}`).then(
-      this.refreshList()
-    )
-  }
+  const remove = (id) => (e) => {
+    deletePredmet(id);
+  };
 
-  updatePredmet(id){
-    this.props.history.push(`/predmet/${id}`)
-  }
+  const update = (id) => (e) => {
+    props.history.push(`/predmet/${id}`)
+  };
 
-  addPredmet(){
-    this.props.history.push(`/predmet/0`)
-  }
-  render() {
-      return (
-        <div className="container">
-          <h3>Svi predmeti</h3>
-          <div className="container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th className="small_tb_head">Id</th>
-                  <th className="large_tb_head">Naziv</th>
-                  <th className="small_tb_head">Obriši</th>
-                  <th className="small_tb_head">Uredi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  this.state.predmeti.map(
-                    predmet =>
-                      <tr key={ predmet.id_predmet }>
-                        <td>{ predmet.id_predmet }</td>
-                        <td>{ predmet.naziv_predmet }</td>
-                        <td>
-                          <button 
-                            onClick={() => this.deletePredmet( predmet.id_predmet )}
-                            className = "btnOption"
-                          >
-                            Delete
-                          </button>
-                        </td>   
-                        <td>
-                          <button 
-                            onClick={() => this.updatePredmet( predmet.id_predmet )}
-                            className = "btnOption"
-                          > 
-                            Update 
-                          </button>
-                        </td>
-                      </tr>
-                  )
-                }
-              </tbody>
-            </table>
-            <button 
-              onClick={() => this.addPredmet()} 
-              className= "btnAddNew"
-            > 
-              Novi predmet 
-            </button>
-          </div>
-        </div>
-      )
-    }
-}
+  const add = () => (e) =>{
+    props.history.push(`/predmet/0`)
+  };
+
+  return (
+    <div className="container">
+      <h3>Svi predmeti</h3>
+      <div className="container">
+        <TablePredmeti
+          predmeti = { predmeti }
+          update = { update }
+          remove = { remove }
+        />
+        <Add action= { add() }> Dodaj predmet </Add>
+      </div>
+    </div>
+  )
+};
 
 export default ListPredmeti;

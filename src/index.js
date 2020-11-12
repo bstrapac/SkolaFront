@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+
 import reportWebVitals from './reportWebVitals';
-import Header from './components/Header';
+import Routes from './routers/Routes';
+import Header from './components/static/Header';
+
+import './index.css';
 
 const jsx =(
   <React.StrictMode>
     <div className="wrapper">
       <Header />
-      <App />
+      <Routes />
     </div>
   </React.StrictMode>
 );

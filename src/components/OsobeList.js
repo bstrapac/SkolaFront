@@ -1,108 +1,59 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:3030/skola/osobe';
-const axiosinstance = axios.create({
-  baseURL : API_URL
-});
-class OsobeList extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {
-      osobe : []
-    }
-    this.getAll = this.getAll.bind(this)
-    this.updateOsoba = this.updateOsoba.bind(this)
-    this.addOsoba = this.addOsoba.bind(this)
-  }
+import { getOsobe, deleteOsoba } from '../services/OsobaService';
 
-  componentDidMount(){
-    this.getAll()
-  }
+import TableOsobe from './tables/TableOsobe'
+import { Add } from './utils/Button'
 
-  getAll(){
-    axiosinstance.get(`/`).then(
-      response =>{
-        this.setState({ osobe : response.data })
-      }
-    )
-  }
+const ListOsobe = (props) => {
+  const [osobe, setOsobe] = useState([]);
 
-  updateOsoba(id){
-    this.props.history.push(`/osoba/${id}`)
-  }
-  
-  addOsoba(){
-    this.props.history.push('/osoba/0')
-  }
-  
-  getDetails(id){
-    this.props.history.push(`/osobaDetails/${id}`);
+  useEffect(() => {
+    getData()
+  }, []);
+
+  const getData = () =>{
+    getOsobe().then(
+      response => {
+        setOsobe(response.data);
+        console.log(response.data);
+      }).catch(e => {
+        console.log(e);
+      });
+  };
+
+  const remove = (id) => (e) => {
+    deleteOsoba(id);
+  };
+
+  const update = (id) => (e) => {
+    props.history.push(`/osoba/${id}`)
+  };
+
+  const add = () => (e) => {
+    props.history.push(`/osoba/0`)
   }
 
-  render(){
-    return(
-      <div>
+  const getDetails = (id) => (e) => {
+    props.history.push(`/osobaDetails/${id}`);
+  }
+
+  return (
+    <div>
         <div>
           <h3>Sve osobe</h3>
         </div>
         <div>
-          <table>
-            <thead>
-              <tr>
-                <th className="small_tb_head">ID</th>
-                <th className="medium_tb_head">ImePrezime</th>
-                <th className="medium_tb_head">Kontakt</th>
-                <th className="large_tb_head">Mail</th>
-                <th className="small_tb_head" >Uredi</th>
-                <th className="small_tb_head" >Obriši</th>
-              </tr>
-            </thead>
-            <tbody>
-            {
-              this.state.osobe.map(
-                osoba => 
-                <tr key= { osoba.id_osoba }>
-                  <td>{ osoba.id_osoba }</td>
-                  <td 
-                    onClick = { () => this.getDetails( osoba.id_osoba ) }
-                    className = "osobaDet" 
-                  >
-                      { osoba.ime } { osoba.prezime }
-                  </td>
-                  <td>{ osoba.kontakt }</td>
-                  <td>{ osoba.mail }</td>
-                  <td>
-                    <button 
-                      onClick = { ()=> this.updateOsoba( osoba.id_osoba) } 
-                      className = "btnOption"
-                    >
-                      Uredi
-                    </button>
-                  </td>
-                  <td>
-                    <button 
-                      className = "btnOption"
-                    >
-                      Obriši
-                    </button>
-                  </td>
-                </tr>
-              )
-            }
-            </tbody>
-          </table>
-          <button
-            onClick = { () => this.addOsoba() }
-            className= "btnAddNew"
-          >
-            Nova osoba
-          </button>
+         <TableOsobe
+          osobe = { osobe }
+          remove = { remove } 
+          update = { update }
+          getDetails = { getDetails }
+         />
+         <Add action ={ add() }>Nova osoba</Add>
         </div>
       </div>
-    )
-  }
+  )
+};
 
-}
-
-export default OsobeList;
+export default ListOsobe;
